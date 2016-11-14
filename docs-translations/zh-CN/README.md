@@ -6,7 +6,7 @@
 
 这里是一些被经常问到的问题，再提 issue 之前请先看一下这里。
 
-+ [Electron 常见问题](faq/electron-faq.md) 需要更新
++ [Electron 常见问题](faq.md)
 
 ## 向导
 

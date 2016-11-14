@@ -2,9 +2,13 @@
 
 ## Electron 会在什么时候升级到最新版本的 Chrome？
 
-通常来说，在稳定版的 Chrome 发布后两周内，我们会更新 Electron 内的 Chrome 版本。
+通常来说，在稳定版的 Chrome 发布后一到两周内，我们会更新 Electron 内的 Chrome 版本。
+
+预估的时间取决于更新涉及的工作量，所以我们无法保证更新的时间。
 
 我们只会使用 stable 版本的 Chrome。但如果在 beta 或 dev 版本中有一个重要的更新，我们会把补丁应用到现版本的 Chrome 上。
+
+更多信息，你可以看 [安全性介绍](tutorial/security.md)
 
 ## Electron 会在什么时候升级到最新版本的 Node.js？
 
@@ -52,17 +56,21 @@ console.log(require('remote').getGlobal('sharedObject').someProperty)
 从
 
 ```javascript
-app.on('ready', function () {
-  var tray = new Tray('/path/to/icon.png')
+const {app, Tray} = require('electron')
+app.on('ready', () => {
+  const tray = new Tray('/path/to/icon.png')
+  tray.setTitle('hello world')
 })
 ```
 
 改为
 
 ```javascript
-var tray = null
-app.on('ready', function () {
+const {app, Tray} = require('electron')
+let tray = null
+app.on('ready', () => {
   tray = new Tray('/path/to/icon.png')
+  tray.setTitle('hello world')
 })
 ```
 
@@ -71,15 +79,17 @@ app.on('ready', function () {
 因为 Electron 在运行环境中引入了 Node.js，所以在 DOM 中有一些额外的变量，比如 `module`、`exports` 和 `require`。这导致
 了许多库不能正常运行，因为它们也需要将同名的变量加入运行环境中。
 
-我们可以通过禁用 Node.js 来解决这个问题，用如下的方式：
+我们可以通过禁用 Node.js 竭诚来解决这个问题，用如下的方式：
 
 ```javascript
 // 在主进程中
-var mainWindow = new BrowserWindow({
+const {BrowserWindow} = require('electron')
+let win = new BrowserWindow({
   webPreferences: {
     nodeIntegration: false
   }
 })
+win.show()
 ```
 
 假如你依然需要使用 Node.js 和 Electron 提供的 API，你需要在引入那些库之前将这些变量重命名，比如：
@@ -128,7 +138,7 @@ npm uninstall -g electron
 ```
 
 如果你依然遇到了这个问题，你可能需要检查一下拼写或者是否在错误的进程中调用了这个模块。比如，
-`require('electron').app` 只能在主进程中使用, 然而 `require('electron').webFrame` 只能在渲染进程中使用。
+`electron.app` 只能在主进程中使用, 然而 `electron.webFrame` 只能在渲染进程中使用。
 
 [memory-management]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Memory_Management
 [variable-scope]: https://msdn.microsoft.com/library/bzt2dkta(v=vs.94).aspx
